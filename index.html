@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="header">
+    <img src="/Bilder/20883.png" alt="Logo" style=" width: 40px; height: 40px; margin-right: 10px;">
+    <h1>AutoNett</h1>
+    <nav>
+        <a href="#" class="active">Hjem</a>
+        <a href="#">Biler</a>
+        <a href="#">Om oss</a>
+        <a href="#">Kontakt</a>
+        <a href="#" id="LeggTilModalKnapp" class="nav-right">Legg til annonse</a>
+    </nav>
+</div>
+
+<!-- The Modal -->
+<div id="Modal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <form id="skjema">
+       <img id="lukk" src="./ikoner/close.png" alt="">
+        <h2 id="modal-title">Legg til annonse</h2>
+        <input type="hidden" id="data-id">
+        <div id="form-container">
+        <label for="merke">Merke:</label>
+        <input type="text" id="merke" placeholder="Merke, f.eks: BMW, Audi, VW" required /><br>
+        <label for="modell">Modell:</label>
+        <input type="text" id="modell" placeholder="Modell, f.eks: Model S, 330D, Golf" required /><br>
+        <label for="aar">År:</label>
+        <input type="text" id="aar" placeholder="År, f.eks: 2020, 2019, 2018" required /><br>
+        <label for="drivstoff">Drivstoff:</label>
+        <input type="text" id="drivstoff" placeholder="Drivstoff, f.eks: Bensin, Diesel, El" required /><br>
+        <label for="farge">farge:</label>
+        <input type="text" id="farge" placeholder="Farge, f.eks: Rød, Blå, Grønn" required /><br>
+        <label for="regnr">Registreringsnummer:</label>
+        <input type="text" id="regnr" placeholder="Registreringsnummer, f.eks: AB12345" required /><br>
+        <label for="km">Kilometerstand:</label>
+        <input type="text" id="km" placeholder="Kilometerstand, f.eks: 123456" required /><br>
+        <label for="pris">pris:</label>
+        <input type="text" id="pris" placeholder="Pris, f.eks: 123456" required /><br>
+        <label for="beskrivelse">Beskrivelse:</label>
+        <textarea id="beskrivelse" placeholder="Beskrivelse, f.eks: God stand, Lite brukt" required></textarea><br>
+        <button id="submit" type="submit">Legg til</button>
+        </div>
+    </form>
+  </div>
+
+</div>
+    <div id="main-container">
+    <div id="filter-container">
+      <h2>Filter annonser</h2>
+      <form id="filter-form">
+          <div>
+              <label for="filter-merke">Merke:</label>
+              <input type="text" id="filter-merke" name="merke" placeholder="F.eks. BMW">
+          </div>
+          <div>
+              <label for="filter-modell">Modell:</label>
+              <input type="text" id="filter-modell" name="modell" placeholder="F.eks. 330D">
+          </div>
+          <div>
+              <label for="filter-aar">År:</label>
+              <input type="number" id="filter-aar" name="aar" placeholder="F.eks. 2020">
+          </div>
+          <div>
+              <label for="filter-drivstoff">Drivstoff:</label>
+              <select id="filter-drivstoff" name="drivstoff">
+                  <option value="">Alle</option>
+                  <option value="Bensin">Bensin</option>
+                  <option value="Diesel">Diesel</option>
+                  <option value="El">El</option>
+              </select>
+          </div>
+          <div>
+              <label for="filter-pris">Pris maks:</label>
+              <input type="number" id="filter-pris" name="pris" placeholder="F.eks. 300000">
+          </div>
+          <button type="submit" id="apply-filters">Filtrer</button>
+      </form>
+    </div>
+    <div id="kort-container"></div>
+    </div>
+    <footer>
+      <p></p>
+    </footer>
+    
+    <script type="module" src="main_DB_rammeverk.js"></script>  
+</body>
+</html>
