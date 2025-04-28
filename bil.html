@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id="tittel">Car Details</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body>
     <div class="header">
@@ -18,14 +19,15 @@
         </nav>
     </div>
 
-    <div id="main-container">
+    <div id="main-container" style="    justify-content: center; align-items: center;">
+        <div></div>
         <div id="bil-container"></div>
         <div id="kontakt-container">
             <div id="ContactModal" class="modal">
                 <div class="modal-content">
                     <form id="contactForm">
                         <img id="closeContactModal" src="./ikoner/close.png" alt="Lukk" style="cursor: pointer;">
-                        <h2>Kontakt Eier</h2>
+                        <h2>Kontakt Selger</h2>
                         <div id="form-container">
                             <label for="ct-navn">Navn:</label>
                             <input type="text" id="ct-navn" required>
@@ -38,11 +40,11 @@
                     </form>
                 </div>
             </div>
-            <h2>Kontakt selger</h2>
+            <h2>Kontakt Info</h2>
             <button class="kontakt">Kontakt</button>
         </div>
     </div>
     
-    <script type="module" src="main_DB_rammeverk.js"></script>
+    <script type="module" src="script.js"></script>
 </body>
 </html>

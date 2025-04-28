@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Legg til annonse</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="header">
+    <img src="/Bilder/20883.png" alt="Logo" style="width: 40px; height: 40px; margin-right: 10px;">
+    <h1>AutoNett</h1>
+    <nav>
+        <a href="index.html">Hjem</a>
+        <a href="#">Biler</a>
+        <a href="#">Om oss</a>
+        <a href="#">Kontakt</a>
+        <a href="leggtil.html" class="nav-right active">Legg til annonse</a>
+    </nav>
+  </div>
+
+  <main>
+    <div class="form-wrapper">
+      <form id="skjema">
+        <h2>Legg til annonse</h2>
+        <input type="hidden" id="data-id">
+        <div id="form-container">
+          <label for="merke">Merke:</label>
+          <input type="text" id="merke" placeholder="Merke, f.eks: BMW, Audi, VW" required /><br>
+          <label for="modell">Modell:</label>
+          <input type="text" id="modell" placeholder="Modell, f.eks: Model S, 330D, Golf" required /><br>
+          <label for="aar">År:</label>
+          <input type="text" id="aar" placeholder="År, f.eks: 2020, 2019, 2018" required /><br>
+          <label for="drivstoff">Drivstoff:</label>
+          <input type="text" id="drivstoff" placeholder="Drivstoff, f.eks: Bensin, Diesel, El" required /><br>
+          <label for="farge">Farge:</label>
+          <input type="text" id="farge" placeholder="Farge, f.eks: Rød, Blå, Grønn" required /><br>
+          <label for="regnr">Registreringsnummer:</label>
+          <input type="text" id="regnr" name="regnr">
+          <button type="button" id="hent-vegvesen">Hent info</button>
+          <label for="km">Kilometerstand:</label>
+          <input type="text" id="km" placeholder="Kilometerstand, f.eks: 123456" required /><br>
+          <label for="pris">Pris:</label>
+          <input type="text" id="pris" placeholder="Pris, f.eks: 123456" required /><br>
+
+          <label for="girkasse">Girkasse:</label>
+          <input type="text" id="girkasse" name="girkasse">
+
+          <label for="hjuldrift">Hjuldrift:</label>
+          <input type="text" id="hjuldrift" name="hjuldrift">
+
+          <label for="effekt">Effekt (hk):</label>
+          <input type="number" id="effekt" name="effekt">
+
+          <label for="sylindervolum">Sylindervolum (L):</label>
+          <input type="number" step="0.1" id="sylindervolum" name="sylindervolum">
+
+          <label for="vekt">Vekt (kg):</label>
+          <input type="number" id="vekt" name="vekt">
+
+          <label for="co2">CO2-utslipp (g/km):</label>
+          <input type="number" id="co2" name="co2">
+
+          <label for="vin">Understells-nummer:</label>
+          <input type="text" id="vin" name="vin" readonly><br>
+
+          <label for="seter">Antall seter:</label>
+          <input type="number" id="seter" name="seter">
+
+          <label for="dorer">Antall dører:</label>
+          <input type="number" id="dorer" name="dorer">
+
+          <label for="utstyr">Utstyr (kommaseparert):</label>
+          <input type="text" id="utstyr" name="utstyr">
+
+          <label for="servicehistorikk">Servicehistorikk:</label>
+          <select id="servicehistorikk" name="servicehistorikk">
+            <option value="Ja">Ja</option>
+            <option value="Nei">Nei</option>
+          </select>
+
+          <label for="eu_kontroll">Neste EU-kontroll:</label>
+          <input type="date" id="eu_kontroll" name="eu_kontroll">
+
+          <label for="garanti">Garanti:</label>
+          <input type="number" id="garanti" name="garanti">
+
+          <label for="tlf">Selger telefonnummer:</label>
+          <input type="text" id="tlf" name="tlf" placeholder="Selger telefonnummer, f.eks: 12345678" required /><br>
+          <label for="beskrivelse">Beskrivelse:</label>
+          <textarea id="beskrivelse" placeholder="Beskrivelse, f.eks: God stand, Lite brukt" required></textarea><br>
+          <button id="submit" type="submit">Legg til</button>
+        </div>
+      </form>
+    </div>
+    <script type="module" src="script.js"></script>
+  </main>
+
+  <footer>
+    <p></p>
+  </footer>
+
+</body>
+</html>

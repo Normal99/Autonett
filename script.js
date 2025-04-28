@@ -1,631 +1,447 @@
-//// filepath: /c:/Users/VolkanBayram/Dokumenter/GitHub/Steingruppa/script.js
+// --- FIREBASE IMPORTS & SETUP ---
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
 import { 
-  initializeApp 
-} from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-import { 
-  getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, getDoc, query, orderBy 
+    getFirestore, 
+    collection, 
+    addDoc, 
+    getDocs, 
+    deleteDoc, 
+    doc, 
+    onSnapshot,
+    getDoc
 } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
 
-// Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyCWIFCogJ15e4dPLtOMxhLOtxMrlyOskGc",
-  authDomain: "steingruppa.firebaseapp.com",
-  projectId: "steingruppa",
-  storageBucket: "steingruppa.firebasestorage.app",
-  messagingSenderId: "1067625469581",
-  appId: "1:1067625469581:web:a3ccfc19a4b0035710f4c4"
+    apiKey: "AIzaSyDzthphp2d-JxYbLqOL73L-ZWRRZV9GGIA",
+    authDomain: "autonett-e35d7.firebaseapp.com",
+    projectId: "autonett-e35d7",
+    storageBucket: "autonett-e35d7.firebasestorage.app",
+    messagingSenderId: "359038789930",
+    appId: "1:359038789930:web:f8bfd4e37d75c607d51653"
 };
 
-// Initialize Firebase and Firestore
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const carsCollection = collection(db, "cars");
 
-// Global settings & data
-let viewMode = "card"; // "table" or "card"
-let allStones = [];      // will hold the raw stone data
-let unsubscribe;         // holds the onSnapshot unsubscribe function
-
-// Start real‑time listener using onSnapshot
-function subscribeToStones() {
-  const stonesQuery = query(collection(db, "steiner"), orderBy("kasse"));
-  // Unsubscribe any previous listener
-  if (unsubscribe) { unsubscribe(); }
-  unsubscribe = onSnapshot(stonesQuery, snapshot => {
-    allStones = snapshot.docs.map(docSnap => ({ docId: docSnap.id, ...docSnap.data() }));
-    renderView(applyFilters(allStones));
-    console.log("Realtime update:", allStones);
-  }, error => {
-    console.error("Error listening to stones:", error);
-  });
-}
-
-// Apply client‑side filtering based on input values
-function applyFilters(stones) {
-  const søkefelt = document.getElementById('søkefelt').value.trim().toLowerCase();
-  const filterKasse = document.getElementById('filter-kasse').value.trim().toLowerCase();
-  const filterSteingruppe = document.getElementById('filter-steingruppe').value.trim().toLowerCase();
-  const filterId = document.getElementById('filter-id').value.trim().toLowerCase();
-  const filterSted = document.getElementById('filter-sted').value.trim().toLowerCase();
-
-  return stones.filter(s => {
-    let match = true;
-    if (søkefelt) {
-      match = match && (
-        (s.kasse && s.kasse.toLowerCase().includes(søkefelt)) ||
-        (s.steingruppe && s.steingruppe.toLowerCase().includes(søkefelt)) ||
-        (s.id && s.id.toLowerCase().includes(søkefelt)) ||
-        (s.sted && s.sted.toLowerCase().includes(søkefelt))
-      );
-    }
-    if (filterKasse) {
-      match = match && (s.kasse && s.kasse.toLowerCase().includes(filterKasse));
-    }
-    if (filterSteingruppe) {
-      match = match && (s.steingruppe && s.steingruppe.toLowerCase().includes(filterSteingruppe));
-    }
-    if (filterId) {
-      match = match && (s.id && s.id.toLowerCase().includes(filterId));
-    }
-    if (filterSted) {
-      match = match && (s.sted && s.sted.toLowerCase().includes(filterSted));
-    }
-    return match;
-  });
-}
-
-// Pick which view to render based on viewMode
-function renderView(filteredStones) {
-  if (viewMode === "table") {
-    renderTable(filteredStones);
-  } else {
-    renderCards(filteredStones);
-  }
-}
-
-// Render table view
-function renderTable(stones) {
-  document.getElementById("data-table").style.display = "table";
-  document.getElementById("cards-container").style.display = "none";
-  
-  const tableBody = document.querySelector('#data-table tbody');
-  tableBody.innerHTML = "";
-  stones.forEach(item => {
-    const row = document.createElement('tr');
-    row.innerHTML = `
-      <td>${item.kasse || ""}</td>
-      <td>${item.steingruppe || ""}</td>
-      <td>${item.id || ""}</td>
-      <td>${item.sted || ""}</td>
-      <td>
-        <button onclick="deleteStone('${item.docId}')">🗑️</button>
-        <button onclick='handleEditStoneClick(${JSON.stringify(item).replace(/'/g, "&#39;")})'>✏️</button>
-      </td>
-    `;
-    row.addEventListener("click", (e) => {
-      if (e.target.tagName !== "BUTTON") {
-        showStoneData(item.docId);
-      }
-    });
-    tableBody.appendChild(row);
-  });
-  console.log("Table view updated");
-}
-
-// Render card view
-function renderCards(stones) {
-  document.getElementById("data-table").style.display = "none";
-  const cardsContainer = document.getElementById("cards-container");
-  cardsContainer.style.display = "flex";
-  cardsContainer.style.flexWrap = "wrap";
-  cardsContainer.innerHTML = "";
-  
-
-  stones.forEach(item => {
-    const card = document.createElement("div");
-    card.classList.add("card");
-    card.innerHTML = `
-      <img src="/Bilder/BMW.jpg" alt="Stein" style="width:100%; border-radius: 4px;">
-      <h3>${item.steingruppe || "Ukjent"}</h3>
-      <p><strong>Kasse:</strong> ${item.kasse || ""}</p>
-      <p><strong>ID:</strong> ${item.id || ""}</p>
-      <p><strong>Sted:</strong> ${item.sted || ""}</p>
-      <div>
-        <button onclick="deleteStone('${item.docId}')">🗑️</button>
-        <button onclick='showEditForm(${JSON.stringify(item).replace(/'/g, "&#39;")})'>✏️</button>
-      </div>
-    `;
-    card.addEventListener("click", (e) => {
-      if (e.target.tagName !== "BUTTON") {
-        showStoneData(item.docId);
-      }
-    });
-    cardsContainer.appendChild(card);
-  });
-  console.log("Card view updated");
-}
-
-// ---------- CRUD OPERATIONS ----------
-
-// Add a new stone
-async function addStone() {
-  try {
-    const kasse = document.getElementById('new-kasse').value.trim();
-    const steingruppe = document.getElementById('new-steingruppe').value.trim();
-    const id = document.getElementById('new-id').value.trim();
-    const sted = document.getElementById('new-sted').value.trim();
-
-    const newStone = { kasse, steingruppe, id, sted };
-    const docRef = await addDoc(collection(db, "steiner"), newStone);
-    alert("Stein lagt til med id: " + docRef.id);
-    // No need to manually re-fetch data—onSnapshot does real‑time updates.
-  } catch (error) {
-    console.error("Error adding stone:", error);
-  }
-}
-
-// Show stone details in a modal
-async function showStoneData(docId) {
-  try {
-    const docRef = doc(db, "steiner", docId);
-    const docSnap = await getDoc(docRef);
-    if (docSnap.exists()) {
-      const data = docSnap.data();
-      const modalBody = document.getElementById("modal-body");
-      modalBody.innerHTML = `
-        <h2>${data.steingruppe || ""}</h2>
-        <hr>
-        <div id="steininfo">
-          <div id="info1">
-            <p><strong>Kasse:</strong> ${data.kasse || ""}</p>
-            <p><strong>Sted:</strong> ${data.sted || ""}</p>
-            <p><strong>ID:</strong> ${data.id || ""}</p>
-          </div>
-          <div id="beskrivelse">
-            <h3>Beskrivelse:</h3>
-            <p>Lorem ipsum bla bla bla</p>
-          </div>
-        </div>
-      `;
-      document.getElementById("modal").style.display = "block";
-    } else {
-      console.error("No such document!");
-    }
-  }  catch (error) {
-  console.error("Error fetching stone details:", error);
-  }
-}
-// Close the modal
-function closeModal() {
-  document.getElementById("modal").style.display = "none";
-}
-
-// Edit a stone
-async function editStone(docId) {
-  try {
-    const kasse = document.getElementById('edit-kasse').value.trim();
-    const steingruppe = document.getElementById('edit-steingruppe').value.trim();
-    const id = document.getElementById('edit-id').value.trim();
-    const sted = document.getElementById('edit-sted').value.trim();
-    const updatedStone = { kasse, steingruppe, id, sted };
-
-    await updateDoc(doc(db, "steiner", docId), updatedStone);
-    alert("Stein oppdatert!");
-    closeEditForm();
-  } catch (error) {
-    console.error("Error updating stone:", error);
-  }
-}
-function showStoneModal(mode, stone = null) {
-  const modal = document.getElementById('stone-modal');
-  const title = document.getElementById('stone-form-title');
-  const submitButton = document.getElementById('stone-submit-button');
-  
-  // Clear form
-  document.getElementById('stone-form').reset();
-  
-  if (mode === 'add') {
-    title.textContent = 'Legg til ny stein';
-    submitButton.textContent = 'Legg til';
-    document.getElementById('stone-docid').value = '';
-  } else if (mode === 'edit' && stone) {
-    title.textContent = 'Rediger stein';
-    submitButton.textContent = 'Oppdater';
-    
-    // Populate form with stone data
-    document.getElementById('stone-kasse').value = stone.kasse || '';
-    document.getElementById('stone-steingruppe').value = stone.steingruppe || '';
-    document.getElementById('stone-id').value = stone.id || '';
-    document.getElementById('stone-sted').value = stone.sted || '';
-    document.getElementById('stone-docid').value = stone.docId;
-  }
-  
-  modal.style.display = 'block';
-}
-
-function closeStoneModal() {
-  document.getElementById('stone-modal').style.display = 'none';
-}
-
-async function submitStoneForm() {
-  const docId = document.getElementById('stone-docid').value;
-  const stoneData = {
-    kasse: document.getElementById('stone-kasse').value.trim(),
-    steingruppe: document.getElementById('stone-steingruppe').value.trim(),
-    id: document.getElementById('stone-id').value.trim(),
-    sted: document.getElementById('stone-sted').value.trim()
-  };
-
-  try {
-    if (docId) {
-      // Update existing stone
-      await updateDoc(doc(db, "steiner", docId), stoneData);
-      alert("Stein oppdatert!");
-    } else {
-      // Add new stone
-      await addDoc(collection(db, "steiner"), stoneData);
-      alert("Ny stein lagt til!");
-    }
-    closeStoneModal();
-  } catch (error) {
-    console.error("Error saving stone:", error);
-    alert("Det oppstod en feil!");
-  }
-}
-
-// Update the click handlers
-function handleAddStoneClick() {
-  showStoneModal('add');
-}
-
-function handleEditStoneClick(stone) {
-  showStoneModal('edit', stone);
-}
-
-// Delete a stone (also clears modal info if showing)
-async function deleteStone(docId) {
-  if (confirm("Er du sikker på at du vil slette denne steinen?")) {
+// --- FIRESTORE HELPERS ---
+async function hentDokumenter() {
     try {
-      await deleteDoc(doc(db, "steiner", docId));
-      alert("Stein slettet!");
-
-      // If the deleted stone is currently shown, clear its display:
-      const modal = document.getElementById("modal");
-      if (modal.style.display === "block") {
-        closeModal();
-      }
+        const snapshot = await getDocs(carsCollection);
+        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     } catch (error) {
-      console.error("Error deleting stone:", error);
-      alert("Feil ved sletting!");
+        console.error("Feil ved henting av biler:", error);
+        return [];
     }
-  }
 }
 
-
-
-// Listen for incoming requests and show empty message
-function subscribeToRequests() {
-  const requestsQuery = query(collection(db, "requests"), orderBy("timestamp"));
-  const requestsTableBody = document.querySelector('#requests-table tbody');
-  
-  onSnapshot(requestsQuery, snapshot => {
-      // Clear existing rows
-      requestsTableBody.innerHTML = '';
-      
-      if (snapshot.empty) {
-          // Show empty state message
-          requestsTableBody.innerHTML = `
-              <tr>
-                  <td colspan="3">
-                      Ingen innkommende forespørsler
-                  </td>
-              </tr>
-          `;
-      } else {
-          // Display requests as normal
-          snapshot.docChanges().forEach(change => {
-              if (change.type === "added") {
-                  const request = { docId: change.doc.id, ...change.doc.data() };
-                  displayRequest(request);
-              } else if (change.type === "modified") {
-                  const request = { docId: change.doc.id, ...change.doc.data() };
-                  updateRequestInTable(request);
-              } else if (change.type === "removed") {
-                  removeRequestFromTable(change.doc.id);
-              }
-          });
-      }
-  }, error => {
-      console.error("Feil ved lytting til forespørsler:", error);
-  });
-}
-
-function displayRequest(request) {
-  const requestsTableBody = document.querySelector('#requests-table tbody');
-  const row = document.createElement('tr');
-  row.setAttribute('data-docid', request.docId);
-  row.innerHTML = `
-    <td>${request.type}</td>
-    <td>${parseRequestDetails(request.details, request.message)}</td>
-    <td>
-      <button onclick="acceptRequest('${request.docId}')">Godta</button>
-      <button onclick="rejectRequest('${request.docId}')">Avslå</button>
-      ${request.type === 'update' ? `<button onclick="editRequest('${request.docId}')">Rediger</button>` : ''}
-    </td>
-  `;
-  requestsTableBody.appendChild(row);
-}
-
-function parseRequestDetails(details, message) {
-  // Early return if details is undefined
-  if (!details) {
-    return "<div class='request-details'>Ingen detaljer tilgjengelig</div>";
-  }
-
-  const formatStoneDetails = (stone) => {
-    if (!stone) return "Ingen data";
-    
-    const fields = [
-      { label: "Kasse", value: stone.kasse || "-" },
-      { label: "Steingruppe", value: stone.steingruppe || "-" },
-      { label: "ID", value: stone.id || "-" },
-      { label: "Sted", value: stone.sted || "-" }
-    ];
-
-    return `
-      <div class="stone-details">
-        ${fields.map(field => `<div class="field"><span class="label">${field.label}:</span> ${field.value}</div>`).join("")}
-      </div>
-    `;
-  };
-
-  // Handle update requests with side-by-side comparison
-  if (details.current && details.requested) {
-    return `
-      <div class="request-details update-request">
-        <div class="comparison-container">
-          <div class="current">
-            <strong>Gjeldende verdier:</strong>
-            ${formatStoneDetails(details.current)}
-          </div>
-          <div class="arrow">➔</div>
-          <div class="requested">
-            <strong>Ønskede endringer:</strong>
-            ${formatStoneDetails(details.requested)}
-          </div>
-        </div>
-        ${message ? `<div class="message"><strong>Melding:</strong> ${message}</div>` : ''}
-      </div>
-    `;
-  }
-
-  // Handle simple requests (add/delete)
-  return `
-    <div class="request-details">
-      <strong>Detaljer</strong>
-      ${formatStoneDetails(details)}
-      ${message ? `<div class="message"><strong>Melding:</strong> ${message}</div>` : ''}
-    </div>
-  `;
-}
-async function acceptRequest(docId) {
-  try {
-    const requestRef = doc(db, "requests", docId);
-    const requestSnap = await getDoc(requestRef);
-    if (requestSnap.exists()) {
-      const request = requestSnap.data();
-      await processRequest(request);
-      await deleteDoc(requestRef);
-      alert("Forespørsel godkjent og behandlet.");
-      removeRequestFromTable(docId);
-    } else {
-      console.error("Ingen slik forespørsel!");
+async function leggTilDokument(data) {
+    try {
+        if (!data || typeof data !== 'object') {
+            throw new Error('Data må være et objekt');
+        }
+        await addDoc(carsCollection, data);
+        console.log("Bil lagt til i databasen.");
+    } catch (error) {
+        console.error("Feil ved lagring av bil:", error);
     }
-  } catch (error) {
-    console.error("Feil ved godkjenning av forespørsel:", error);
-  }
 }
 
-async function rejectRequest(docId) {
-  try {
-    await deleteDoc(doc(db, "requests", docId));
-    alert("Forespørsel avslått.");
-    removeRequestFromTable(docId);
-  } catch (error) {
-    console.error("Feil ved avslag av forespørsel:", error);
-  }
-}
-function removeRequestFromTable(docId) {
-  const row = document.querySelector(`tr[data-docid="${docId}"]`);
-  if (row) {
-    row.remove();
-  }
-}
-
-function editRequest(docId) {
-  // Fetch the request details and populate the form for editing
-  const requestRef = doc(db, "requests", docId);
-  getDoc(requestRef).then(requestSnap => {
-    if (requestSnap.exists()) {
-      const request = requestSnap.data();
-      populateRequestForm(request.details.current, 'update');
-      // Populate the new values in the form
-      document.getElementById('req-new-kasse').value = request.details.requested.kasse || "";
-      document.getElementById('req-new-steingruppe').value = request.details.requested.steingruppe || "";
-      document.getElementById('req-new-id').value = request.details.requested.id || "";
-      document.getElementById('req-new-sted').value = request.details.requested.sted || "";
-      // Show the request modal
-      showRequestModal();
-      // Add a hidden input to store the request docId
-      document.getElementById('request-docid').value = docId;
-    } else {
-      console.error("Ingen slik forespørsel!");
+async function slettDokument(id) {
+    try {
+        await deleteDoc(doc(db, "cars", id));
+        console.log("Bil slettet fra databasen.");
+    } catch (error) {
+        console.error("Feil ved sletting av bil:", error);
     }
-  }).catch(error => {
-    console.error("Feil ved henting av forespørselsdetaljer:", error);
-  });
 }
 
-async function processRequest(request) {
-  const { type, details, stoneDocId } = request;
-
-  try {
-    if (type === "add") {
-      await addDoc(collection(db, "steiner"), details);
-      console.log("Stein lagt til:", details);
-    } else if (type === "update") {
-      const stoneRef = doc(db, "steiner", stoneDocId);
-      await updateDoc(stoneRef, details.requested);
-      console.log("Stein oppdatert:", details);
-    } else if (type === "delete") {
-      const stoneRef = doc(db, "steiner", stoneDocId);
-      await deleteDoc(stoneRef);
-      console.log("Stein slettet:", details);
+function visDokumenterLive(visningsfunksjon) {
+    if (typeof visningsfunksjon !== 'function') {
+        console.error('visDokumenterLive krever en funksjon som parameter');
+        return;
     }
-  } catch (error) {
-    console.error("Feil ved behandling av forespørsel:", error);
-  }
-}
-
-function showRequestModal() {
-  document.getElementById('request-modal').style.display = 'block';
-}
-
-function closeRequestModal() {
-  document.getElementById('request-modal').style.display = 'none';
-}
-
-function toggleRequests() {
-  const content = document.getElementById('requests-content');
-  const icon = document.getElementById('toggle-icon');
-  const container = document.getElementById('requests-container');
-  
-  if (content.classList.contains('show')) {
-      content.classList.remove('show');
-      icon.textContent = '▶ Innkommende forespørsler';
-      container.style.maxHeight = '50px'; // Collapsed height
-      container.style.height = '15%'; // Collapsed height
-  } else {
-      content.classList.add('show');
-      icon.textContent = '▼ Innkommende forespørsler';
-      container.style.maxHeight = '300px'; // Expanded height
-      container.style.height = '100%'; // Collapsed height
-  }
-}
-
-function populateRequestForm(stone, requestType) {
-  console.log("Fyller ut forespørsel for stein:", stone);
-  
-  // Update the form title based on the request type
-  const formTitle = document.getElementById('request-form-title');
-  formTitle.textContent = "Rediger forespørsel";
-
-  // Toggle request form fields based on type
-  toggleRequestFields();
-
-  // Populate the current (readonly) fields with this stone's details
-  document.getElementById('current-kasse').value = stone.kasse || "";
-  document.getElementById('current-steingruppe').value = stone.steingruppe || "";
-  document.getElementById('current-id').value = stone.id || "";
-  document.getElementById('current-sted').value = stone.sted || "";
-  // Store the Firestore docId in a hidden field so the request is tied to this stone
-  document.getElementById('request-stone-docid').value = stone.docId;
-  
-  // For update requests, pre-fill the new field values (side-by-side comparison)
-  if (requestType === "update") {
-    document.getElementById('req-new-kasse').value = stone.kasse || "";
-    document.getElementById('req-new-steingruppe').value = stone.steingruppe || "";
-    document.getElementById('req-new-id').value = stone.id || "";
-    document.getElementById('req-new-sted').value = stone.sted || "";
-  }
-  // Show the request modal
-  showRequestModal();
-}
-
-function toggleRequestFields() {
-  // Hide all sections first
-  document.getElementById('current-request-fields').style.display = "none";
-  document.getElementById('update-request-fields').style.display = "none";
-  document.getElementById('side-by-side-container').style.display = "none";
-  
-  document.getElementById('current-request-fields').style.display = "block";
-  document.getElementById('update-request-fields').style.display = "block";
-  document.getElementById('side-by-side-container').style.display = "flex";
-}
-
-async function submitRequest() {
-  const docId = document.getElementById('request-docid').value;
-  const stoneDocId = document.getElementById('request-stone-docid').value;
-  const kasse = document.getElementById('req-new-kasse').value.trim();
-  const steingruppe = document.getElementById('req-new-steingruppe').value.trim();
-  const id = document.getElementById('req-new-id').value.trim();
-  const sted = document.getElementById('req-new-sted').value.trim();
-  const updatedDetails = { kasse, steingruppe, id, sted };
-
-  try {
-    const requestRef = doc(db, "requests", docId);
-    await updateDoc(requestRef, {
-      "details.requested": updatedDetails,
-      "details.current": { kasse, steingruppe, id, sted },
-      stoneDocId
+    return onSnapshot(carsCollection, (snapshot) => {
+        const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        visningsfunksjon(data);
     });
-    alert("Forespørsel oppdatert!");
-    closeRequestModal();
-  } catch (error) {
-    console.error("Feil ved oppdatering av forespørsel:", error);
-  }
 }
 
-// ---------- UI HELPERS ----------
-
-function toggleFilter() {
-  const form = document.getElementById('filters');
-  form.style.display = (form.style.display === "block") ? "none" : "block";
+async function hentDokument(collectionName, id) {
+    try {
+        const docRef = doc(db, collectionName, id);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+            return { id: docSnap.id, ...docSnap.data() };
+        } else {
+            throw new Error("No such document!");
+        }
+    } catch (error) {
+        console.error("Feil ved henting av dokument:", error);
+        throw error;
+    }
 }
 
-// Toggle between table and card view
-function toggleView() {
-  viewMode = (viewMode === "table") ? "card" : "table";
-  const toggleButton = document.querySelector('.søkeboksknapp[onclick="toggleView()"]');
-  
-  // Update button with appropriate icon
-  toggleButton.innerHTML = `<img src="bilder/${viewMode === 'table' ? 'card' : 'list'}.png" 
-                           alt="${viewMode === 'table' ? 'List View' : 'Card View'}">`;
-  
-  renderView(applyFilters(allStones));
-}
+// --- APP/UI LOGIC ---
+const samlingNavn = "cars";
+const listeContainer = document.getElementById("kort-container");
+let allBiler = [];
 
-// ---------- EVENT LISTENERS ----------
-
-// Re-render view on filter input changes
-document.getElementById('søkefelt').addEventListener('input', () => renderView(applyFilters(allStones)));
-document.getElementById('filter-kasse').addEventListener('input', () => renderView(applyFilters(allStones)));
-document.getElementById('filter-steingruppe').addEventListener('input', () => renderView(applyFilters(allStones)));
-document.getElementById('filter-id').addEventListener('input', () => renderView(applyFilters(allStones)));
-document.getElementById('filter-sted').addEventListener('input', () => renderView(applyFilters(allStones)));
-
-// Expose functions globally if needed by inline HTML
-window.toggleFilter = toggleFilter;
-window.showStoneData = showStoneData;
-window.toggleView = toggleView;
-window.closeModal = closeModal;
-window.populateRequestForm = populateRequestForm;
-window.acceptRequest = acceptRequest;
-window.rejectRequest = rejectRequest;
-window.editRequest = editRequest;
-window.showRequestModal = showRequestModal;
-window.closeRequestModal = closeRequestModal;
-window.submitRequest = submitRequest;
-window.toggleRequests = toggleRequests;
-window.editStone = editStone;
-window.deleteStone = deleteStone;
-window.showStoneModal = showStoneModal;
-window.closeStoneModal = closeStoneModal;
-window.submitStoneForm = submitStoneForm;
-window.handleAddStoneClick = handleAddStoneClick;
-window.handleEditStoneClick = handleEditStoneClick;
-
-// Start listening in real time on page load
-window.addEventListener("load", () => {
-  subscribeToStones();
-  subscribeToRequests();
+// Main initialization
+document.addEventListener("DOMContentLoaded", () => {
+    const path = window.location.pathname;
+    if (path.endsWith('index.html') || path.endsWith('/')) {
+        initializeMainPage();
+    } else if (path.endsWith('bil.html')) {
+        initializeCarDetailPage();
+    }
 });
+
+
+// Car detail page initialization
+function initializeCarDetailPage() {
+    const params = new URLSearchParams(window.location.search);
+    const carId = params.get('id');
+    if (carId) {
+        hentDokument("cars", carId)
+            .then(bil => {
+                displayCarDetails(bil);
+                setupContactForm();
+            })
+            .catch(err => {
+                document.getElementById('bil-container').innerHTML = `<p>Error: ${err.message}</p>`;
+            });
+    }
+}
+
+// Display functions
+function visBiler(biler) {
+    if (!listeContainer) return;
+    listeContainer.innerHTML = "";
+    biler.forEach(bil => {
+        listeContainer.innerHTML += `
+            <a href="bil.html?id=${bil.id}" class="kort">
+                <img src="./Bilder/${bil.id}.jpg" alt="${bil.merke} ${bil.modell}" style="object-fit: cover;">
+                <div>
+                    <h3>${bil.merke} ${bil.modell}</h3>
+                    <p>Årsmodell: ${bil.aarsmodell}</p>
+                    <p>Drivstoff: ${bil.drivstoff}</p>
+                    <p>Kilometer: ${bil.kmavstand}</p>
+                    <p>Pris: ${bil.pris} kr</p>
+                </div>
+            </a>
+        `;
+    });
+}
+
+function displayCarDetails(bil) {
+    const bilContainer = document.getElementById('bil-container');
+    if (!bilContainer) return;
+    bilContainer.innerHTML = `
+        <a href="index.html" class="tilbake">Tilbake</a>
+        <img src="./Bilder/${bil.id}.jpg" alt="Car image" style="max-width: 100%;">
+        <h2>${bil.merke} ${bil.modell}</h2>
+        <div class="car-info-icons">
+            <p>
+                <span class="material-icons" style="vertical-align: middle;">calendar_today</span>
+                Årsmodell: ${bil.aarsmodell}
+            </p>
+            <p>
+                <span class="material-icons" style="vertical-align: middle;">local_gas_station</span>
+                Drivstoff: ${bil.drivstoff}
+            </p>
+            <p>
+                <span class="material-icons" style="vertical-align: middle;">speed</span>
+                Kilometerstand: ${bil.kmavstand} km
+            </p>
+            <p>
+                <span class="material-icons" style="vertical-align: middle;">attach_money</span>
+                Pris: ${bil.pris} kr
+            </p>
+        </div>
+                <h3>Beskrivelse:</h3>
+        <p>${bil.beskrivelse}</p>
+        <h3>Detaljer:</h3>
+        <div class="car-extra-details">
+            <p><strong>Girkasse:</strong> ${bil.girkasse || '-'}</p>
+            <p><strong>Hjuldrift:</strong> ${bil.hjuldrift || '-'}</p>
+            <p><strong>Effekt:</strong> ${bil.effekt ? bil.effekt + ' hk' : '-'}</p>
+            <p><strong>Sylindervolum:</strong> ${bil.sylindervolum ? bil.sylindervolum + ' L' : '-'}</p>
+            <p><strong>Vekt:</strong> ${bil.vekt ? bil.vekt + ' kg' : '-'}</p>
+            <p><strong>CO2-utslipp:</strong> ${bil.co2 ? bil.co2 + ' g/km' : '-'}</p>
+            <p><strong>Antall seter:</strong> ${bil.seter || '-'}</p>
+            <p><strong>Antall dører:</strong> ${bil.dorer || '-'}</p>
+            <p><strong>Servicehistorikk:</strong> ${bil.servicehistorikk || '-'}</p>
+            <p><strong>Neste EU-kontroll:</strong> ${bil.eu_kontroll || '-'}</p>
+            <p><strong>Farge:</strong> ${bil.farge || '-'}</p>
+            <p><strong>Registreringsnummer:</strong> ${bil.regnr || '-'}</p>
+            <p><strong>Garanti:</strong> ${bil.garanti ? bil.garanti + ' mnd' : '-'}</p>
+        </div>
+        <h3>Utstyr:</h3>
+        <div>
+            ${bil.utstyr && Array.isArray(bil.utstyr) ? bil.utstyr.map(u => `<p>${u}</p>`).join('') : '<p>-</p>'}
+        </div>
+        <button class="kontakt">Kontakt selger</button>
+        <p><strong>Telefon:</strong> ${bil.tlf || '-'}</p>
+        <button class="rediger" onclick="window.location.href='leggtil.html?id=${bil.id}'" style="margin-top: 5px;">Rediger bil</button>
+        <button class="slett" onclick="slettBil('${bil.id}')" style="margin-top: 5px;">Slett bil</button>
+    `;
+    document.getElementById('tittel').textContent = `${bil.merke} ${bil.modell} | Autonett`;
+}
+
+// Form handling
+async function handleFormSubmit(e) {
+    e.preventDefault();
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get('id');
+    const formData = {
+        merke: document.getElementById("merke").value.trim(),
+        modell: document.getElementById("modell").value.trim(),
+        regnr: document.getElementById("regnr").value.trim(),
+        aarsmodell: document.getElementById("aar").value.trim(),
+        kmavstand: document.getElementById("km").value.trim(),
+        drivstoff: document.getElementById("drivstoff").value.trim(),
+        farge: document.getElementById("farge").value.trim(),
+        pris: document.getElementById("pris").value.trim(),
+        beskrivelse: document.getElementById("beskrivelse").value.trim(),
+        girkasse: document.getElementById("girkasse").value.trim(),
+        hjuldrift: document.getElementById("hjuldrift").value.trim(),
+        effekt: document.getElementById("effekt").value.trim(),
+        sylindervolum: document.getElementById("sylindervolum").value.trim(),
+        vekt: document.getElementById("vekt").value.trim(),
+        co2: document.getElementById("co2").value.trim(),
+        seter: document.getElementById("seter").value.trim(),
+        dorer: document.getElementById("dorer").value.trim(),
+        utstyr: document.getElementById("utstyr").value.trim().split(',').map(e => e.trim()),
+        servicehistorikk: document.getElementById("servicehistorikk").value,
+        eu_kontroll: document.getElementById("eu_kontroll").value,
+        garanti: document.getElementById("garanti").value.trim(),           // <-- NYTT
+        tlf: document.getElementById("tlf").value.trim()                    // <-- NYTT
+    };
+    try {
+        if (id) {
+            // Oppdater eksisterende bil
+            await oppdaterDokument(id, formData);
+            alert("Bilen ble oppdatert!");
+        } else {
+            // Legg til ny bil
+            await leggTilDokument(formData);
+            alert("Bilen ble lagt til!");
+        }
+        e.target.reset();
+        window.location.href = "index.html";
+    } catch (error) {
+        console.error("Feil ved lagring:", error);
+        alert("Kunne ikke lagre bilen. Prøv igjen.");
+    }
+}
+
+// Contact form handling
+function setupContactForm() {
+    const kontaktBtn = document.querySelector('.kontakt');
+    const contactModal = document.getElementById('ContactModal');
+    const closeBtn = document.getElementById('closeContactModal');
+    if (kontaktBtn && contactModal) {
+        kontaktBtn.onclick = () => contactModal.style.display = 'block';
+    }
+    if (closeBtn) {
+        closeBtn.onclick = () => contactModal.style.display = 'none';
+    }
+    const contactForm = document.getElementById('contactForm');
+    if (contactForm) {
+        contactForm.onsubmit = (e) => {
+            e.preventDefault();
+            // Handle contact form submission here
+            contactModal.style.display = 'none';
+        };
+    }
+}
+
+// Event listeners setup
+function setupMainPageListeners() {
+    const skjema = document.getElementById("skjema");
+    if (skjema) {
+        skjema.addEventListener("submit", handleFormSubmit);
+    }
+    const leggTilBtn = document.getElementById("LeggTilModalKnapp");
+    if (leggTilBtn) {
+        leggTilBtn.addEventListener("click", () => showCarModal('add'));
+    }
+    const lukkBtn = document.getElementById("lukk");
+    if (lukkBtn) {
+        lukkBtn.addEventListener("click", () => showCarModal('close'));
+    }
+}
+
+function setupSearch() {
+    const searchInput = document.getElementById("search-input");
+    if (searchInput) {
+        searchInput.addEventListener("input", handleSearch);
+    }
+}
+
+function handleSearch(e) {
+    const query = e.target.value.toLowerCase();
+    const filteredBiler = allBiler.filter(bil =>
+        bil.merke.toLowerCase().includes(query) ||
+        bil.modell.toLowerCase().includes(query) ||
+        (bil.beskrivelse && bil.beskrivelse.toLowerCase().includes(query))
+    );
+    visBiler(filteredBiler);
+}
+
+// Filter functionality
+function setupFilterForm() {
+    const filterForm = document.getElementById("filter-form");
+    if (filterForm) {
+        filterForm.addEventListener("submit", handleFilter);
+    }
+}
+
+function handleFilter(e) {
+    e.preventDefault();
+    const filters = {
+        merke: document.getElementById("filter-merke")?.value.toLowerCase(),
+        modell: document.getElementById("filter-modell")?.value.toLowerCase(),
+        aar: document.getElementById("filter-aar")?.value,
+        drivstoff: document.getElementById("filter-drivstoff")?.value.toLowerCase(),
+        prismax: document.getElementById("filter-pris-max")?.value,
+        prismin: document.getElementById("filter-pris-min")?.value
+    };
+    const filteredBiler = allBiler.filter(bil => {
+        return (!filters.merke || bil.merke.toLowerCase().includes(filters.merke)) &&
+               (!filters.modell || bil.modell.toLowerCase().includes(filters.modell)) &&
+               (!filters.aar || bil.aarsmodell == filters.aar) &&
+               (!filters.drivstoff || bil.drivstoff.toLowerCase() === filters.drivstoff) &&
+               (!filters.prismax || parseInt(bil.pris) <= parseInt(filters.prismax)) &&
+               (!filters.prismin || parseInt(bil.pris) > parseInt(filters.prismin));
+    });
+    visBiler(filteredBiler);
+}
+
+function showCarModal(action) {
+    const modal = document.getElementById("Modal");
+    if (!modal) return;
+    if (action === 'add') {
+        modal.style.display = "block";
+    } else if (action === 'close') {
+        modal.style.display = "none";
+    }
+}
+function setupVegvesenAutoFill() {
+    const hentBtn = document.getElementById("hent-vegvesen");
+    if (!hentBtn) return;
+
+    hentBtn.addEventListener("click", async function() {
+        const regnrInput = document.getElementById("regnr");
+        if (!regnrInput) return;
+        const regnr = regnrInput.value.trim().toUpperCase();
+        if (!regnr) {
+            alert("Skriv inn registreringsnummer");
+            return;
+        }
+
+        try {
+            const response = await fetch('http://localhost:3000/api/vegvesen?regnr=' + regnr);
+            if (!response.ok) throw new Error("Fant ikke kjøretøydata");
+            const data = await response.json();
+
+            // Fyll ut feltene
+            for (const key in data) {
+                const input = document.getElementById(key);
+                if (input) input.value = data[key];
+            }
+        } catch (err) {
+            alert("Kunne ikke hente data fra Statens Vegvesen.");
+            console.error(err);
+        }
+    });
+}
+
+// ...eksisterende kode...
+
+async function fyllUtSkjemaForRedigering() {
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get('id');
+    if (!id) return;
+    try {
+        const bil = await hentDokument("cars", id);
+        // Sett verdier i skjemaet
+        for (const key in bil) {
+            const input = document.getElementById(key);
+            if (input) {
+                if (input.type === "checkbox") {
+                    input.checked = !!bil[key];
+                } else if (input.tagName === "SELECT") {
+                    input.value = bil[key];
+                } else if (input.tagName === "TEXTAREA") {
+                    input.value = bil[key];
+                } else {
+                    input.value = bil[key];
+                }
+            }
+        }
+    } catch (err) {
+        alert("Kunne ikke hente bil for redigering.");
+        console.error(err);
+    }
+}
+
+// Kjør denne på leggtil.html
+document.addEventListener("DOMContentLoaded", () => {
+    const path = window.location.pathname;
+    if (path.endsWith('leggtil.html')) {
+        setupMainPageListeners();
+        setupVegvesenAutoFill();
+        fyllUtSkjemaForRedigering(); // <-- Legg til denne linjen!
+    }
+});
+
+function initializeMainPage() {
+    visDokumenterLive((biler) => {
+        allBiler = biler;
+        visBiler(biler);
+    });
+    setupMainPageListeners();
+    setupFilterForm();
+    setupSearch();
+    setupVegvesenAutoFill(); // <-- Add this line
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    const path = window.location.pathname;
+    if (path.endsWith('index.html') || path.endsWith('/')) {
+        initializeMainPage();
+    } else if (path.endsWith('bil.html')) {
+        initializeCarDetailPage();
+    } else if (path.endsWith('leggtil.html')) {
+        setupMainPageListeners();
+        setupVegvesenAutoFill(); // <-- Legg til denne linjen!
+    }
+});
+
+window.slettBil = async function slettBil(id) {
+    if (!confirm("Er du sikker på at du vil slette denne bilen?")) return;
+    try {
+        await slettDokument(id);
+        alert("Bilen ble slettet!");
+        window.location.href = "index.html";
+    } catch (error) {
+        alert("Kunne ikke slette bilen.");
+        console.error(error);
+    }
+};
+
+import { updateDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+
+async function oppdaterDokument(id, data) {
+    try {
+        const docRef = doc(db, "cars", id);
+        await updateDoc(docRef, data);
+        console.log("Bil oppdatert i databasen.");
+    } catch (error) {
+        console.error("Feil ved oppdatering av bil:", error);
+    }
+}
+
+// Optional: Add any additional helpers or exports here if you want to split later

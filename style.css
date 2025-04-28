@@ -81,14 +81,6 @@ nav a.active {
     overflow-y: auto;
     border-radius: 5px;
 }
-#lukk {
-    position: fixed;
-    background-color: lightgrey;
-    border-radius: 50%;
-}
-#lukk:hover{
-    cursor:pointer;
-}
 #skjema,
 #contactForm {
     width: 300px;
@@ -119,13 +111,16 @@ nav a.active {
     border: 1px solid #ccc;
     border-radius: 5px;
 }
-#main-container{
-    display:grid;
+#main-container {
+    display: grid;
     grid-template-columns: auto auto auto;
     grid-template-rows: auto;
 }
-#bil-container img{
-height: 700px;
+#bil-container img {
+    max-height: 900px;
+    height: auto;
+    width: 100%;
+    border-radius: 10px;
 }
 #kontakt-container{
     margin-left:20px;
@@ -157,11 +152,15 @@ height: 700px;
     max-width: 100%;
     display: block;         /* Removes any extra space below the image */
 }
+#left-container {
+    max-width: 400px;
+    padding: 20px;
+}
 #filter-container {
     background-color: #fff;
     padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-top: #333 solid 1px;
+    border-bottom: #333 solid 1px;
     margin: 20px;
 }
 #filter-container h2 {
@@ -181,14 +180,33 @@ height: 700px;
     color: #555;
 }
 #filter-form input,
-#filter-form select {
+#filter-form select,
+#search-form input {
     width: 100%;
-    padding: 8px;
+    min-width: 120px;
+    padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
+    box-sizing: border-box;
     font-size: 0.9rem;
 }
-#apply-filters {
+
+#filter-form input {
+    width: 100%;
+}
+#apply-filters,
+button[type="submit"] {
+    background-color: #4CAF50;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    width: 100%;
+    margin-top: 5px;
+}
+button {
     background-color: #4CAF50;
     color: #fff;
     border: none;
@@ -198,6 +216,20 @@ height: 700px;
     font-size: 0.9rem;
     width: 100%;
 }
+button:hover {
+    background-color: #45a049;
+}
 #apply-filters:hover {
     background-color: #45a049;
+}
+.car-info-icons h3 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.2rem;
+    margin: 0.5em 0;
+}
+.material-icons {
+    font-size: 1.5em;
+    color: #4CAF50;
 }
