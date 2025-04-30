@@ -1,44 +1,35 @@
+/* ========== RESET & BASE ========== */
 body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
     margin: 0;
     padding: 0;
-    margin-top: 100px ;
+    margin-top: 100px;
     transition: all 0.3s fade-in-out;
 }
-#submit {
-    cursor: pointer;
-}
-/* KI ga meg denne koden jeg har justert litt på det. */
+
+/* ========== HEADER & NAVIGATION ========== */
 .header {
-    display:flex;
+    display: flex;
     background-color: #333;
-    padding-left: 1rem;
-    padding-top: 1rem;
-    padding-right: 1rem;
+    padding: 1rem;
     position: fixed;
     top: 0;
     width: 100%;
+    z-index: 10;
+    align-items: center;
 }
-
 .header h1 {
     color: white;
     margin: 0 0 1rem 0;
 }
-
-
-a { color: inherit; text-decoration: none;} 
-
 nav {
     display: flex;
     gap: 1rem;
 }
-
 nav a {
-    margin-right:  10px;
+    margin-right: 10px;
     margin-left: 15px;
-    height: 25%;
-    width:max-content;
     text-align: center;
     color: white;
     text-decoration: none;
@@ -46,86 +37,33 @@ nav a {
     border-right: grey solid 1px;
     border-left: grey solid 1px;
 }
-
 nav a:hover {
     background-color: #444;
 }
-
 nav a.active {
     background-color: #4CAF50;
 }
-
 .nav-right {
     margin-left: auto;
     margin-right: 20px;
 }
-    
-/* Hentet fra w3schools og justert */
-.modal{
-    display: none;
-    position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
-    padding-top: 100px; /* Location of the box */
-    left: 0;
-    top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    overflow-y: auto;
-    background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-    border-radius: 5px;
-}
-.modal-content {
-    height: 90%;
-    overflow-y: auto;
-    border-radius: 5px;
-}
-#skjema,
-#contactForm {
-    width: 300px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-#form-container {
-    display: grid;
-    align-items: center;
-    width: fit-content;
-    border-radius: 5px;
-}
-#form-container input,
-#form-container button {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-#form-container textarea {
-    width: 100%;
-    height: 100px;
-    resize: none;
-    overflow: auto;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
+
+a { color: inherit; text-decoration: none; }
+
+/* ========== MAIN LAYOUT ========== */
 #main-container {
     display: grid;
     grid-template-columns: auto auto auto;
     grid-template-rows: auto;
+    align-items: center;
 }
-#bil-container img {
-    max-height: 900px;
-    height: auto;
-    width: 100%;
-    border-radius: 10px;
+#left-container {
+    max-width: 400px;
+    padding: 20px;
 }
-#kontakt-container{
-    margin-left:20px;
-}
-#kort-container{
+
+/* ========== CARD GRID ========== */
+#kort-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 300px));
     justify-content: center;
@@ -133,29 +71,27 @@ nav a.active {
     border-radius: 10px;
     grid-gap: 10px;
     margin: 10px 0;
-    padding: 10px;
-    padding: 2px 16px;
+    padding: 10px 16px;
 }
-.kort{
+.kort {
     margin: 10px;
     box-sizing: border-box;
-    border: 1px solid #ccc; /* Adds a subtle border */
-    border-radius: 10px;     /* Rounds the corners */
-    overflow: hidden;       /* Ensures child elements (like the image) are clipped to the border-radius */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: adds a slight shadow */
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background: #fff;
 }
-.kort:hover{
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.6); /* Optional: adds a slight shadow */
+.kort:hover {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
 }
 .kort img {
     object-fit: cover;
     max-width: 100%;
-    display: block;         /* Removes any extra space below the image */
+    display: block;
 }
-#left-container {
-    max-width: 400px;
-    padding: 20px;
-}
+
+/* ========== FILTER & SEARCH ========== */
 #filter-container {
     background-color: #fff;
     padding: 20px;
@@ -190,10 +126,6 @@ nav a.active {
     box-sizing: border-box;
     font-size: 0.9rem;
 }
-
-#filter-form input {
-    width: 100%;
-}
 #apply-filters,
 button[type="submit"] {
     background-color: #4CAF50;
@@ -216,13 +148,96 @@ button {
     font-size: 0.9rem;
     width: 100%;
 }
-button:hover {
+button:hover, #apply-filters:hover {
     background-color: #45a049;
 }
-#apply-filters:hover {
-    background-color: #45a049;
+
+/* ========== FORM LAYOUT FOR LEGG TIL ========== */
+.form-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 10px;
+    padding: 32px 24px;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.07);
 }
-.car-info-icons h3 {
+.leggtil-sections {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 32px;
+    align-items: start;
+}
+.form-section {
+    min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
+    background: #f8f8f8;
+    border-radius: 8px;
+    padding: 18px 20px 12px 20px;
+    margin-bottom: 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+}
+.grunnleggende-info {
+    grid-column: 1;
+    grid-row: 1;
+}
+.kontaktinfo {
+    grid-column: 1;
+    grid-row: 2;
+}
+.tekniske-data {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+}
+.annet {
+    grid-column: 3;
+    grid-row: 1 / span 2;
+}
+label, input, select, textarea {
+    box-sizing: border-box;
+}
+input, select, textarea {
+    width: 100%;
+    min-width: 0;
+    padding: 7px 8px;
+    border-radius: 4px;
+    border: 1px solid #bbb;
+    font-size: 1rem;
+    margin-bottom: 10px;
+    background: #fff;
+}
+textarea {
+    height: 100px;
+    resize: none;
+    overflow: auto;
+}
+@media (max-width: 900px) {
+    .leggtil-sections {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+    }
+    .form-section {
+        max-width: 100%;
+        margin-bottom: 18px;
+    }
+}
+
+/* ========== CAR DETAILS ========== */
+#bil-container img {
+    max-height: 900px;
+    height: auto;
+    width: 100%;
+    border-radius: 10px;
+}
+#kontakt-container {
+    margin-left: 20px;
+}
+.car-info-icons h3, .car-info-icons p {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -232,4 +247,61 @@ button:hover {
 .material-icons {
     font-size: 1.5em;
     color: #4CAF50;
+}
+.car-extra-details p {
+    margin: 0.2em 0;
+}
+
+/* ========== MODAL ========== */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 100;
+    padding-top: 100px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+    border-radius: 5px;
+}
+.modal-content {
+    height: 90%;
+    overflow-y: auto;
+    border-radius: 5px;
+}
+#contactForm {
+    width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* ========== FOOTER ========== */
+footer {
+    text-align: center;
+    padding: 20px 0;
+    background: #333;
+    color: #fff;
+    margin-top: 40px;
+}
+
+/* ========== UTSTYRSLISTE FLEX ========== */
+.utstyrsliste-flex {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.utstyr-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 6px;
+  margin-right: 16px;
+}
+.utstyr-item label {
+  margin-left: 4px;
+  margin-bottom: 0;
 }

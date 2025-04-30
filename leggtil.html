@@ -20,85 +20,136 @@
   </div>
 
   <main>
-    <div class="form-wrapper">
-      <form id="skjema">
-        <h2>Legg til annonse</h2>
-        <input type="hidden" id="data-id">
-        <div id="form-container">
-          <label for="merke">Merke:</label>
-          <input type="text" id="merke" placeholder="Merke, f.eks: BMW, Audi, VW" required /><br>
-          <label for="modell">Modell:</label>
-          <input type="text" id="modell" placeholder="Modell, f.eks: Model S, 330D, Golf" required /><br>
-          <label for="aar">År:</label>
-          <input type="text" id="aar" placeholder="År, f.eks: 2020, 2019, 2018" required /><br>
-          <label for="drivstoff">Drivstoff:</label>
-          <input type="text" id="drivstoff" placeholder="Drivstoff, f.eks: Bensin, Diesel, El" required /><br>
-          <label for="farge">Farge:</label>
-          <input type="text" id="farge" placeholder="Farge, f.eks: Rød, Blå, Grønn" required /><br>
-          <label for="regnr">Registreringsnummer:</label>
-          <input type="text" id="regnr" name="regnr">
-          <button type="button" id="hent-vegvesen">Hent info</button>
-          <label for="km">Kilometerstand:</label>
-          <input type="text" id="km" placeholder="Kilometerstand, f.eks: 123456" required /><br>
-          <label for="pris">Pris:</label>
-          <input type="text" id="pris" placeholder="Pris, f.eks: 123456" required /><br>
-
-          <label for="girkasse">Girkasse:</label>
-          <input type="text" id="girkasse" name="girkasse">
-
-          <label for="hjuldrift">Hjuldrift:</label>
-          <input type="text" id="hjuldrift" name="hjuldrift">
-
-          <label for="effekt">Effekt (hk):</label>
-          <input type="number" id="effekt" name="effekt">
-
-          <label for="sylindervolum">Sylindervolum (L):</label>
-          <input type="number" step="0.1" id="sylindervolum" name="sylindervolum">
-
-          <label for="vekt">Vekt (kg):</label>
-          <input type="number" id="vekt" name="vekt">
-
-          <label for="co2">CO2-utslipp (g/km):</label>
-          <input type="number" id="co2" name="co2">
-
-          <label for="vin">Understells-nummer:</label>
-          <input type="text" id="vin" name="vin" readonly><br>
-
-          <label for="seter">Antall seter:</label>
-          <input type="number" id="seter" name="seter">
-
-          <label for="dorer">Antall dører:</label>
-          <input type="number" id="dorer" name="dorer">
-
-          <label for="utstyr">Utstyr (kommaseparert):</label>
-          <input type="text" id="utstyr" name="utstyr">
-
-          <label for="servicehistorikk">Servicehistorikk:</label>
-          <select id="servicehistorikk" name="servicehistorikk">
-            <option value="Ja">Ja</option>
-            <option value="Nei">Nei</option>
-          </select>
-
-          <label for="eu_kontroll">Neste EU-kontroll:</label>
-          <input type="date" id="eu_kontroll" name="eu_kontroll">
-
-          <label for="garanti">Garanti:</label>
-          <input type="number" id="garanti" name="garanti">
-
-          <label for="tlf">Selger telefonnummer:</label>
-          <input type="text" id="tlf" name="tlf" placeholder="Selger telefonnummer, f.eks: 12345678" required /><br>
-          <label for="beskrivelse">Beskrivelse:</label>
-          <textarea id="beskrivelse" placeholder="Beskrivelse, f.eks: God stand, Lite brukt" required></textarea><br>
-          <button id="submit" type="submit">Legg til</button>
-        </div>
-      </form>
+    <div class="container">
+      <div class="form-wrapper">
+        <form id="skjema">
+          <h2 id="leggtil-title">Legg til annonse</h2>
+          <div id="temp-doc-id" style="display: none;"></div>
+          <div class="leggtil-sections">
+            <fieldset class="form-section grunnleggende-info">
+              <legend>Grunnleggende info</legend>
+              <label for="merke">Merke*</label>
+              <input type="text" id="merke" required placeholder="BMW, Audi, VW">
+              <label for="modell">Modell*</label>
+              <input type="text" id="modell" required placeholder="330D, Golf">
+              <label for="aar">År*</label>
+              <input type="number" id="aar" required placeholder="2020">
+              <label for="drivstoff">Drivstoff*</label>
+              <input type="text" id="drivstoff" required placeholder="Bensin, Diesel, El">
+              <label for="farge">Farge*</label>
+              <input type="text" id="farge" required placeholder="Blå, Rød">
+              <label for="regnr">Registreringsnummer</label>
+              <input type="text" id="regnr">
+              <button type="button" id="hent-vegvesen">Hent info</button>
+            </fieldset>
+            <fieldset class="form-section tekniske-data">
+              <legend>Tekniske data</legend>
+              <label for="km">Kilometerstand*</label>
+              <input type="number" id="km" required placeholder="123456">
+              <label for="pris">Pris*</label>
+              <input type="number" id="pris" required placeholder="123456">
+              <label for="girkasse">Girkasse</label>
+              <input type="text" id="girkasse">
+              <label for="hjuldrift">Hjuldrift</label>
+              <input type="text" id="hjuldrift">
+              <label for="effekt">Effekt (hk)</label>
+              <input type="number" id="effekt">
+              <label for="sylindervolum">Sylindervolum (L)</label>
+              <input type="number" step="0.1" id="sylindervolum">
+              <label for="vekt">Vekt (kg)</label>
+              <input type="number" id="vekt">
+              <label for="co2">CO2-utslipp (g/km)</label>
+              <input type="number" id="co2">
+              <label for="vin">Understells-nummer</label>
+              <input type="text" id="vin" readonly>
+              <label for="seter">Antall seter</label>
+              <input type="number" id="seter">
+              <label for="dorer">Antall dører</label>
+              <input type="number" id="dorer">
+              <label for="forstegangsregistrert">Førstegangsregistrert</label>
+              <input type="date" id="forstegangsregistrert">
+              <label for="omregistreringsavgift">Omregistreringsavgift (kr)</label>
+              <input type="number" id="omregistreringsavgift">
+            </fieldset>
+            <fieldset class="form-section annet">
+              <legend>Annet</legend>
+              <label>Utstyr (velg det som passer)</label>
+              <div class="utstyrsliste-flex">
+                  <div class="utstyr-item"><input type="checkbox" class="utstyr-checkbox" value="Klimaanlegg" id="utstyr-klimaanlegg"><label for="utstyr-klimaanlegg">Klimaanlegg</label></div>
+                  <div class="utstyr-item"><input type="checkbox" class="utstyr-checkbox" value="Navigasjonssystem" id="utstyr-navigasjonssystem"><label for="utstyr-navigasjonssystem">Navigasjonssystem</label></div>
+                  <div class="utstyr-item"><input type="checkbox" class="utstyr-checkbox" value="Skinnseter" id="utstyr-skinnseter"><label for="utstyr-skinnseter">Skinnseter</label></div>
+                  <div class="utstyr-item"><input type="checkbox" class="utstyr-checkbox" value="Bluetooth" id="utstyr-bluetooth"><label for="utstyr-bluetooth">Bluetooth</label></div>
+                  <div class="utstyr-item"><input type="checkbox" class="utstyr-checkbox" value="Parkeringssensor" id="utstyr-parkeringssensor"><label for="utstyr-parkeringssensor">Parkeringssensor</label></div>
+                  <div class="utstyr-item"><input type="checkbox" class="utstyr-checkbox" value="Ryggekamera" id="utstyr-ryggekamera"><label for="utstyr-ryggekamera">Ryggekamera</label></div>
+                  <div class="utstyr-item"><input type="checkbox" class="utstyr-checkbox" value="Hengerfeste" id="utstyr-hengerfeste"><label for="utstyr-hengerfeste">Hengerfeste</label></div>
+                  <div class="utstyr-item"><input type="checkbox" class="utstyr-checkbox" value="El. vinduer" id="utstyr-elvinduer"><label for="utstyr-elvinduer">El. vinduer</label></div>
+                  <div class="utstyr-item"><input type="checkbox" class="utstyr-checkbox" value="Setevarmer" id="utstyr-setevarmer"><label for="utstyr-setevarmer">Setevarmer</label></div>
+                  <div class="utstyr-item"><input type="checkbox" class="utstyr-checkbox" value="Cruisekontroll" id="utstyr-cruisekontroll"><label for="utstyr-cruisekontroll">Cruisekontroll</label></div>
+                  <div class="utstyr-item"><input type="checkbox" class="utstyr-checkbox" value="DAB+ radio" id="utstyr-dab"><label for="utstyr-dab">DAB+ radio</label></div>
+                  <div class="utstyr-item"><input type="checkbox" class="utstyr-checkbox" value="Isofix" id="utstyr-isofix"><label for="utstyr-isofix">Isofix</label></div>
+                  <div class="utstyr-item"><input type="checkbox" class="utstyr-checkbox" value="Alarm" id="utstyr-alarm"><label for="utstyr-alarm">Alarm</label></div>
+                  <div class="utstyr-item"><input type="checkbox" class="utstyr-checkbox" value="Takluke" id="utstyr-takluke"><label for="utstyr-takluke">Takluke</label></div>
+                  <div class="utstyr-item"><input type="checkbox" class="utstyr-checkbox" value="Firehjulstrekk" id="utstyr-firehjulstrekk"><label for="utstyr-firehjulstrekk">Firehjulstrekk</label></div>
+                  <div class="utstyr-item"><input type="checkbox" class="utstyr-checkbox" value="Sommerhjul" id="utstyr-sommerhjul"><label for="utstyr-sommerhjul">Sommerhjul</label></div>
+                  <div class="utstyr-item"><input type="checkbox" class="utstyr-checkbox" value="Vinterhjul" id="utstyr-vinterhjul"><label for="utstyr-vinterhjul">Vinterhjul</label></div>
+                </div>
+              <label for="utstyr">Annet utstyr (kommaseparert)</label>
+              <input type="text" id="utstyr" placeholder="F.eks. sportsratt, LED-lys">
+              <label for="servicehistorikk">Servicehistorikk</label>
+              <select id="servicehistorikk">
+                <option value="Ja">Ja</option>
+                <option value="Nei">Nei</option>
+              </select>
+              <label for="eu_kontroll">Neste EU-kontroll</label>
+              <input type="date" id="eu_kontroll">
+              <label for="garanti">Garanti (mnd)</label>
+              <input type="number" id="garanti">
+              <label for="interiorfarge">Interiørfarge</label>
+              <input type="text" id="interiorfarge">
+              <label for="interiormateriale">Interiørmateriale</label>
+              <input type="text" id="interiormateriale">
+              <label for="antall_eiere">Antall eiere</label>
+              <input type="number" id="antall_eiere">
+            </fieldset>
+            <fieldset class="form-section kontaktinfo">
+              <legend>Kontaktinfo</legend>
+              <label for="tlf">Telefonnummer*</label>
+              <input type="text" id="tlf" required placeholder="12345678">
+              <label for="epost">E-post*</label>
+              <input type="email" id="epost" required placeholder="din@email.no">
+              <label for="adresse">Adresse</label>
+              <input type="text" id="adresse" placeholder="Gate, nr, postnr, sted">
+              <label for="salgsform">Salgsform</label>
+              <select id="salgsform">
+                <option value="Privat">Privat</option>
+                <option value="Forhandler">Forhandler</option>
+              </select>
+              <label for="tilstand">Tilstand</label>
+              <select id="tilstand">
+                <option value="Brukt">Brukt</option>
+                <option value="Ny">Ny</option>
+                <option value="Reservedelsbil">Reservedelsbil</option>
+              </select>
+            </fieldset>
+          </div>
+          <fieldset class="form-section desc">
+            <legend>Bilder og Beskrivelse </legend>
+            <input type="file" id="bilder" accept="image/*" multiple style="display: none;">
+            <div id="leggtil-image-gallery"></div>
+            <button type="button" id="leggtil-edit-images-btn" class="main-btn">Rediger bilder</button>
+            <label for="beskrivelse">Beskrivelse</label>
+            <textarea id="beskrivelse" required placeholder="God stand, lite brukt"></textarea>
+          <button id="submit" type="submit" class="main-btn">Legg til</button>
+        </form>
+      </div>
     </div>
-    <script type="module" src="script.js"></script>
   </main>
 
   <footer>
-    <p></p>
+    <div class="footer-wrapper">
+      <p></p>
+    </div>
   </footer>
-
+  <script type="module" src="script.js"></script>
 </body>
 </html>

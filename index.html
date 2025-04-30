@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <!-- HEADER -->
   <div class="header">
     <img src="/Bilder/20883.png" alt="Logo" style=" width: 40px; height: 40px; margin-right: 10px;">
     <h1>AutoNett</h1>
@@ -19,56 +20,59 @@
     </nav>
   </div>
 
-  <!-- Fjernet gammel modal og modal-innhold -->
-
-  <div id="main-container">
-    <div id="left-container">
-      <div id="search-container">
-        <h2>Finn din drømmebil</h2>
-        <form id="search-form">
-            <input type="text" id="search-input" placeholder="Søk etter bilmerke, modell eller annet...">
-        </form>
-      </div>
-      <div id="filter-container">
-      <h2>Filter annonser</h2>
-      <form id="filter-form">
-          <div>
-              <label for="filter-merke">Merke:</label>
-              <input type="text" id="filter-merke" name="merke" placeholder="F.eks. BMW">
-          </div>
-          <div>
-              <label for="filter-modell">Modell:</label>
-              <input type="text" id="filter-modell" name="modell" placeholder="F.eks. 330D">
-          </div>
-          <div>
-              <label for="filter-aar">År:</label>
-              <input type="number" id="filter-aar" name="aar" placeholder="F.eks. 2020">
-          </div>
-          <div>
-              <label for="filter-drivstoff">Drivstoff:</label>
-              <select id="filter-drivstoff" name="drivstoff">
-                  <option value="">Alle</option>
-                  <option value="Bensin">Bensin</option>
-                  <option value="Diesel">Diesel</option>
-                  <option value="El">El</option>
-              </select>
-          </div>
-          <div>
-              <label for="filter-pris-max">Pris maks:</label>
-              <input type="number" id="filter-pris-max" name="pris" placeholder="F.eks. 300000">
-          </div>
-          <div>
-            <label for="filter-pris-min">Pris min:</label>
-            <input type="number" id="filter-pris-min" name="pris" placeholder="F.eks. 200000">
+  <!-- MAIN CONTENT -->
+  <main>
+    <div id="main-container">
+      <div id="left-container">
+        <div id="search-container">
+          <h2>Finn din drømmebil</h2>
+          <form id="search-form">
+              <input type="text" id="search-input" placeholder="Søk etter bilmerke, modell eller annet...">
+          </form>
         </div>
-          <button type="submit" id="apply-filters">Filtrer</button>
-      </form>
+        <div id="filter-container">
+          <h2>Filter annonser</h2>
+          <form id="filter-form">
+              <div>
+                  <label for="filter-merke">Merke:</label>
+                  <input type="text" id="filter-merke" name="merke" placeholder="F.eks. BMW">
+              </div>
+              <div>
+                  <label for="filter-modell">Modell:</label>
+                  <input type="text" id="filter-modell" name="modell" placeholder="F.eks. 330D">
+              </div>
+              <div>
+                  <label for="filter-aar">År:</label>
+                  <input type="number" id="filter-aar" name="aar" placeholder="F.eks. 2020">
+              </div>
+              <div>
+                  <label for="filter-drivstoff">Drivstoff:</label>
+                  <select id="filter-drivstoff" name="drivstoff">
+                      <option value="">Alle</option>
+                      <option value="Bensin">Bensin</option>
+                      <option value="Diesel">Diesel</option>
+                      <option value="El">El</option>
+                  </select>
+              </div>
+              <div>
+                  <label for="filter-pris-max">Pris maks:</label>
+                  <input type="number" id="filter-pris-max" name="pris" placeholder="F.eks. 300000">
+              </div>
+              <div>
+                <label for="filter-pris-min">Pris min:</label>
+                <input type="number" id="filter-pris-min" name="pris" placeholder="F.eks. 200000">
+              </div>
+              <button type="submit" id="apply-filters">Filtrer</button>
+          </form>
+        </div>
       </div>
+      <div id="kort-container"></div>
     </div>
-    <div id="kort-container"></div>
-  </div>
+  </main>
+
+  <!-- FOOTER -->
   <footer>
-    <p></p>
+    <p>&copy; 2025 AutoNett. Alle rettigheter reservert.</p>
   </footer>
   
   <script type="module" src="script.js"></script>  
